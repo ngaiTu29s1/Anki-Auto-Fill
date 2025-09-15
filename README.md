@@ -1,0 +1,2 @@
+# Anki-Auto-Fill
+Lazy way to create Anki cards
