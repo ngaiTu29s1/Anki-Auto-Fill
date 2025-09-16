@@ -2,13 +2,10 @@ import os
 import discord
 from dotenv import load_dotenv
 
-# Tải các biến môi trường từ file .env
-load_dotenv()
+# environment variables
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env.bot'))
 TOKEN = os.getenv('DISCORD_TOKEN')
-
-# Kênh mà bot sẽ lắng nghe
-TARGET_CHANNEL_ID = int(os.getenv('TARGET_CHANNEL_ID')) # <<< THAY BẰNG ID KÊNH #raw-words CỦA BẠN
-
+TARGET_CHANNEL_ID = int(os.getenv('TARGET_CHANNEL_ID'))
 
 # Khởi tạo bot với các quyền cần thiết
 intents = discord.Intents.default()
