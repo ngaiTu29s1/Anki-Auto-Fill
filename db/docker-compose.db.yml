@@ -32,3 +32,6 @@ services:
     env_file:
       - .env.db
     command: python db/scripts/migrate.py
+    volumes:
+      - ../db:/app/db
+      - ../requirements.txt:/app/requirements.txt

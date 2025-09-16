@@ -20,6 +20,7 @@ def migrate():
             engine = create_engine(DATABASE_URL)
             Base.metadata.create_all(engine)
             print("Migration done!")
+            print("DB URL:", DATABASE_URL)
             return
         except OperationalError as e:
             print(f"DB connection failed (attempt {i+1}/{max_retries}): {e}")
