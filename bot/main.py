@@ -21,8 +21,8 @@ client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
-    """Sự kiện được gọi khi bot đã kết nối thành công với Discord."""
-    print(f'{client.user} đã kết nối với Discord!')
+    # Ready event
+    print(f'{client.user} has connected to Discord!')
     print('-----------------------------------------')
 
 @client.event
@@ -32,8 +32,7 @@ async def on_message(message):
 
     content = message.content.strip()
     if content.startswith('!help'):
-        await message.channel.send("Instructions is comming soon...")
-
+        await message.channel.send("Instructions is coming soon...")
 
     elif content.startswith('!nw'):
         words = split_words(content)
@@ -48,7 +47,6 @@ async def on_message(message):
                 insert_word(w, status=WordStatus.QUEUED)
             else:
                 invalid_words.append(w)
-                insert_word(w, status=WordStatus.FLAGGED)
         if valid_words:
             try:
                 results = await get_definitions(valid_words)

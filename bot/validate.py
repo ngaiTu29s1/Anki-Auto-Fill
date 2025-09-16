@@ -1,4 +1,5 @@
 import re
+from ai import  ai_validate_word
 
 def split_words(text):
 	# ignore command
@@ -11,5 +12,6 @@ def split_words(text):
 	return words
 
 def validate_word(word):
-	# character only
-	return bool(re.match(r'^[a-zA-Z\- ]+$', word))
+	res = ai_validate_word(word)
+	print(res)
+	return res

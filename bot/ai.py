@@ -1,3 +1,4 @@
+import re
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
@@ -35,3 +36,11 @@ async def get_definitions(words):
 
 def format_results(words, results):
     return '\n'.join(f"{i+1}. {w}: {r}" for i, (w, r) in enumerate(zip(words, results)))
+
+def ai_validate_word(word):
+    prompt = (
+        'You are an English dictionary validator. For the given word, respond with only one word: VALID if it is a real, meaningful English word, or INVALID if it is not. Do not explain or add anything else. Word: "{}"'
+    ).format(word)
+    response = model.generate_content(prompt)
+    result = response.text.strip().upper()
+    return result == "VALID"
