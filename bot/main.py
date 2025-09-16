@@ -1,13 +1,15 @@
 import os
 import discord
 from dotenv import load_dotenv
+
 from validate import split_words, validate_word
+from ai import get_definitions, format_results
+
 
 # environment variables
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env.bot'))
 TOKEN = os.getenv('DISCORD_TOKEN')
 TARGET_CHANNEL_ID = int(os.getenv('TARGET_CHANNEL_ID'))
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 # init bot
 intents = discord.Intents.default()
@@ -26,28 +28,29 @@ async def on_message(message):
         return
 
     content = message.content.strip()
-    if content.startswith('!nw'):
+    if content.startswith('!help'):
+        await message.channel.send("Instructions is comming soon...")
+
+    elif content.startswith('!nw'):
         words = split_words(content)
         if not words:
-            await message.channel.send("Không tìm thấy từ hợp lệ nào.")
+            await message.channel.send("Cannot find any words to define.")
             return
         valid_words = [w for w in words if validate_word(w)]
         invalid_words = [w for w in words if not validate_word(w)]
-        # Ghi nhận các từ hợp lệ (sau này sẽ ghi DB)
         if valid_words:
-            await message.channel.send(f"Đã nhận và ghi nhận các từ: {', '.join(f'`{w}`' for w in valid_words)}")
+            try:
+                results = await get_definitions(valid_words)
+                print(results)
+                output = format_results(valid_words, results)
+            except Exception as e:
+                output = f"Error: {e}"
+            await message.channel.send(output)
         if invalid_words:
             await message.channel.send(f"Các từ sau không hợp lệ: {', '.join(f'`{w}`' for w in invalid_words)}")
+
     else:
-        # Xử lý như cũ nếu không phải command !nw
-        word_to_learn = content
-        print(f"Nhận được từ mới: '{word_to_learn}' từ người dùng {message.author.name}")
-        if validate_word(word_to_learn):
-            print(f"Từ '{word_to_learn}' hợp lệ.")
-            await message.channel.send(f"Đã nhận và ghi nhận từ: `{word_to_learn}`")
-        else:
-            print(f"Từ '{word_to_learn}' không hợp lệ.")
-            await message.channel.send(f"Từ `{word_to_learn}` có vẻ không hợp lệ. Vui lòng kiểm tra lại.")
+        await message.channel.send("Invalid command. Type !help for usage.")
 
 # Chạy bot
 client.run(TOKEN)
