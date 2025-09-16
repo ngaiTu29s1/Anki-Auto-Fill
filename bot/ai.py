@@ -1,10 +1,11 @@
+import re
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 
 
 # config
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env.bot'))
+load_dotenv(os.path.join(os.path.dirname(__file__), './.env.bot.dev'))
 gemini_key = os.getenv('GEMINI_API_KEY')
 genai.configure(api_key=gemini_key)
 model = genai.GenerativeModel('gemini-1.5-flash')
@@ -35,3 +36,11 @@ async def get_definitions(words):
 
 def format_results(words, results):
     return '\n'.join(f"{i+1}. {w}: {r}" for i, (w, r) in enumerate(zip(words, results)))
+
+def ai_validate_word(word):
+    prompt = (
+        'You are an English dictionary validator. For the given word, respond with only one word: VALID if it is a real, meaningful English word, or INVALID if it is not. Do not explain or add anything else. Word: "{}"'
+    ).format(word)
+    response = model.generate_content(prompt)
+    result = response.text.strip().upper()
+    return result == "VALID"
