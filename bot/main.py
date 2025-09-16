@@ -1,13 +1,15 @@
 import os
 import discord
 from dotenv import load_dotenv
+from validate import split_words, validate_word
 
 # environment variables
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env.bot'))
 TOKEN = os.getenv('DISCORD_TOKEN')
 TARGET_CHANNEL_ID = int(os.getenv('TARGET_CHANNEL_ID'))
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
-# Khởi tạo bot với các quyền cần thiết
+# init bot
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
@@ -20,35 +22,32 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    """Sự kiện được gọi mỗi khi có một tin nhắn mới."""
-    # Bỏ qua tin nhắn từ chính bot
-    if message.author == client.user:
+    if message.author == client.user or message.channel.id != TARGET_CHANNEL_ID:
         return
 
-    # Chỉ xử lý tin nhắn trong kênh target
-    if message.channel.id != TARGET_CHANNEL_ID:
-        return
-
-    word_to_learn = message.content.strip()
-    print(f"Nhận được từ mới: '{word_to_learn}' từ người dùng {message.author.name}")
-
-    # --- Giai đoạn AI Validate (sẽ thêm sau) ---
-    print(f"Bắt đầu validate từ '{word_to_learn}'...")
-    # is_valid = await call_ai_to_validate(word_to_learn)
-    is_valid = True # Tạm thời luôn cho là hợp lệ
-
-    if is_valid:
-        print(f"Từ '{word_to_learn}' hợp lệ.")
-        # --- Giai đoạn ghi vào DB (sẽ thêm sau) ---
-        print(f"Chuẩn bị ghi '{word_to_learn}' vào cơ sở dữ liệu...")
-        # success = await write_to_database(word_to_learn)
-
-        # Phản hồi lại người dùng
-        await message.channel.send(f"Đã nhận và ghi nhận từ: `{word_to_learn}`")
+    content = message.content.strip()
+    if content.startswith('!nw'):
+        words = split_words(content)
+        if not words:
+            await message.channel.send("Không tìm thấy từ hợp lệ nào.")
+            return
+        valid_words = [w for w in words if validate_word(w)]
+        invalid_words = [w for w in words if not validate_word(w)]
+        # Ghi nhận các từ hợp lệ (sau này sẽ ghi DB)
+        if valid_words:
+            await message.channel.send(f"Đã nhận và ghi nhận các từ: {', '.join(f'`{w}`' for w in valid_words)}")
+        if invalid_words:
+            await message.channel.send(f"Các từ sau không hợp lệ: {', '.join(f'`{w}`' for w in invalid_words)}")
     else:
-        print(f"Từ '{word_to_learn}' không hợp lệ.")
-        await message.channel.send(f"Từ `{word_to_learn}` có vẻ không hợp lệ. Vui lòng kiểm tra lại.")
-
+        # Xử lý như cũ nếu không phải command !nw
+        word_to_learn = content
+        print(f"Nhận được từ mới: '{word_to_learn}' từ người dùng {message.author.name}")
+        if validate_word(word_to_learn):
+            print(f"Từ '{word_to_learn}' hợp lệ.")
+            await message.channel.send(f"Đã nhận và ghi nhận từ: `{word_to_learn}`")
+        else:
+            print(f"Từ '{word_to_learn}' không hợp lệ.")
+            await message.channel.send(f"Từ `{word_to_learn}` có vẻ không hợp lệ. Vui lòng kiểm tra lại.")
 
 # Chạy bot
 client.run(TOKEN)
