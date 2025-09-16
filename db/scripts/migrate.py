@@ -16,10 +16,14 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 def migrate():
     max_retries = 10
     for i in range(max_retries):
-        engine = create_engine(DATABASE_URL)
-        Base.metadata.create_all(engine)
-        print("Migration done!")
-        return
+        try:
+            engine = create_engine(DATABASE_URL)
+            Base.metadata.create_all(engine)
+            print("Migration done!")
+            return
+        except OperationalError as e:
+            print(f"DB connection failed (attempt {i+1}/{max_retries}): {e}")
+            time.sleep(3)
     print("Migration failed after retries!")
     raise Exception("Could not connect to DB after retries")
 
