@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 
 # config
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env.bot'))
+load_dotenv(os.path.join(os.path.dirname(__file__), './.env.bot.dev'))
 gemini_key = os.getenv('GEMINI_API_KEY')
 genai.configure(api_key=gemini_key)
 model = genai.GenerativeModel('gemini-1.5-flash')
