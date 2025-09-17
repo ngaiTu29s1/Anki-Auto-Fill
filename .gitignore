@@ -134,17 +134,15 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
-# Environments
-.env
-.env.*
-.envrc
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-!*.env.enc
+# Ignore secrets and sensitive files
+# Bỏ tất cả file .env (mọi cấp thư mục)
+**/.env
+**/*.env
+**/.env.*
+**/*.env.*
+
+# Nhưng cho phép commit bản đã mã hoá
+!**/*.enc
 
 # Spyder project settings
 .spyderproject
