@@ -1,14 +1,9 @@
-
-# Đơn giản, dễ đọc cho người mới
 import uuid
 from enum import Enum as PyEnum
 from sqlalchemy import String, Text, DateTime, Enum, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, mapped_column
-
-
-Base = declarative_base()
-
+from db.models.base import Base
 # Trạng thái xử lý của từ
 class WordStatus(PyEnum):
     QUEUED = "queued"

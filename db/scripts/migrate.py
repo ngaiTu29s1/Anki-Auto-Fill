@@ -1,4 +1,3 @@
-
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
@@ -6,6 +5,7 @@ import time
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
 from db.models.raw_word import Base
+from db.models.real_word import RealWord
 from dotenv import load_dotenv
 print('sys.path:', sys.path)
 
