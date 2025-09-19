@@ -2,7 +2,7 @@ import re
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
-
+import json
 
 # config
 load_dotenv(os.path.join(os.path.dirname(__file__), './.env.bot.dev'))
@@ -69,7 +69,8 @@ def get_full_word(words):
     )
     response = model.generate_content(prompt)
     text = response.text.strip()
-    print(type(text[0]))
+    text_json = json.loads(text)
+    print(text_json, type(text_json[0]))
     # Parse response: mỗi dòng 1. word: definition
     results = []
     for i in range(len(words)):

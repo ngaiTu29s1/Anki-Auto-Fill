@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from db.models.raw_word import RawWord, WordStatus, Base
 from db.models.real_word import RealWord
 from dotenv import load_dotenv
+import json
 
 load_dotenv(os.path.join(os.path.dirname(__file__), './.env.bot.dev'))
 
