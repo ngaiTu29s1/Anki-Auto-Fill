@@ -70,18 +70,7 @@ def get_full_word(words):
     response = model.generate_content(prompt)
     text = response.text.strip()
     text_json = json.loads(text)
-    print(text_json, type(text_json[0]))
-    # Parse response: mỗi dòng 1. word: definition
-    results = []
-    for i in range(len(words)):
-        prefix = f"{i+1}. "
-        line = next((l for l in text.splitlines() if l.strip().startswith(prefix)), None)
-        if line:
-            parts = line.split(':', 1)
-            definition = parts[1].strip() if len(parts) > 1 else ''
-        else:
-            definition = ''
-        results.append(definition)
-    return results
+    # print(text_json, type(text_json[0]))
+    return text_json
 
 get_full_word(["example", "test"])
