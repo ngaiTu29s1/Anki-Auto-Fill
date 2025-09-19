@@ -13,5 +13,5 @@ def split_words(text):
 
 def validate_word(word):
 	res = ai_validate_word(word)
-	print(res)
+	print(f"Validation result for '{word}': {res}")
 	return res

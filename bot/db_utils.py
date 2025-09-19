@@ -14,22 +14,26 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 
 
-def insert_word(word, note=None, status=WordStatus.QUEUED, lang="en"):
+def insert_raw_word(table, **kwargs):
     session = Session()
     try:
-        normalized_word = word.lower().strip()
-        raw_word = RawWord(
-            word=word,
-            normalized_word=normalized_word,
-            lang=lang,
-            status=status,
-            note=note
-        )
-        session.add(raw_word)
+        row = table(**kwargs)
+        session.add(row)
         session.commit()
-        print(f"Inserted word: {word}")
+        print(f"Inserted word: {row.word}") 
     except Exception as e:
         session.rollback()
         print(f"Error inserting word: {e}")
+    finally:
+        session.close()
+
+def get_raw_words(status=WordStatus.QUEUED, limit=100):
+    session = Session()
+    try:
+        words = session.query(RawWord).filter(RawWord.status == status).limit(limit).all()
+        return [w.normalized_word for w in words]
+    except Exception as e:
+        print(f"Error fetching words: {e}")
+        return []
     finally:
         session.close()

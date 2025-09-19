@@ -1,12 +1,10 @@
 import os
 import discord
 from dotenv import load_dotenv
-
-
 from validate import split_words, validate_word
 from ai import get_definitions, format_results
-from db_utils import insert_word
-from db.models.raw_word import WordStatus
+from db_utils import insert_raw_word, get_raw_words
+from db.models.raw_word import WordStatus, RawWord
 
 
 # environment variables
@@ -31,6 +29,7 @@ async def on_message(message):
         return
 
     content = message.content.strip()
+    print("Received message:", content)
     if content.startswith('!help'):
         await message.channel.send("Instructions is coming soon...")
 
@@ -44,7 +43,13 @@ async def on_message(message):
         for w in words:
             if validate_word(w):
                 valid_words.append(w)
-                insert_word(w, status=WordStatus.QUEUED)
+                insert_raw_word(
+                    RawWord,
+                    word=w,
+                    normalized_word=w.lower().strip(),
+                    status=WordStatus.QUEUED,
+                    lang='en'
+                )
             else:
                 invalid_words.append(w)
         if valid_words:
@@ -58,6 +63,9 @@ async def on_message(message):
         if invalid_words:
             await message.channel.send(f"Các từ sau không hợp lệ: {', '.join(f'`{w}`' for w in invalid_words)}")
 
+    elif content.startswith('!get'):
+        words = get_raw_words()
+        await message.channel.send("Fetched words:\n" + "\n".join(f"{i+1}. {w}" for i, w in enumerate(words)))
     else:
         await message.channel.send("Invalid command. Type !help for usage.")
 
