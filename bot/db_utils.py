@@ -15,7 +15,7 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 
 
-def insert_raw_word(table, **kwargs):
+def insert_word(table, **kwargs):
     session = Session()
     try:
         row = table(**kwargs)
@@ -28,10 +28,10 @@ def insert_raw_word(table, **kwargs):
     finally:
         session.close()
 
-def get_raw_words(status=WordStatus.QUEUED, limit=5):
+def get_raw_words(status=WordStatus.QUEUED):
     session = Session()
     try:
-        words = session.query(RawWord).filter(RawWord.status == status).limit(limit).all()
+        words = session.query(RawWord).filter(RawWord.status == status).all()
         return [w.normalized_word for w in words]
     except Exception as e:
         print(f"Error fetching words: {e}")

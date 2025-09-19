@@ -71,7 +71,6 @@ def get_full_word(words):
     response = model.generate_content(prompt)
     text = response.text.strip()
     text_json = json.loads(text)
-    # print(text_json, type(text_json[0]))
     return text_json
 
-print(get_full_word(get_raw_words()))
+# print(get_full_word(get_raw_words()))

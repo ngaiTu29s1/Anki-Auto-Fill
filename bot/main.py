@@ -3,7 +3,7 @@ import discord
 from dotenv import load_dotenv
 from validate import split_words, validate_word
 from ai import get_definitions, format_results
-from db_utils import insert_raw_word, get_raw_words
+from db_utils import insert_word, get_raw_words
 from db.models.raw_word import WordStatus, RawWord
 
 
@@ -43,7 +43,7 @@ async def on_message(message):
         for w in words:
             if validate_word(w):
                 valid_words.append(w)
-                insert_raw_word(
+                insert_word(
                     RawWord,
                     word=w,
                     normalized_word=w.lower().strip(),

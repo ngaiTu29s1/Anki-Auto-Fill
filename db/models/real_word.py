@@ -9,7 +9,7 @@ class RealWord(Base):
     __tablename__ = "real_words"
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     word: Mapped[str] = mapped_column(Text, nullable=False)
-    phonentic: Mapped[str] = mapped_column(Text, nullable=False)
+    phonetic: Mapped[str] = mapped_column(Text, nullable=False)
     english_meaning: Mapped[str] = mapped_column(Text, nullable=False)
     vietnamese_meaning: Mapped[str] = mapped_column(Text, nullable=False)
     example_sentence: Mapped[str] = mapped_column(Text, nullable=False)
