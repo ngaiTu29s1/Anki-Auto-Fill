@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from db.models.raw_word import RawWord, WordStatus, Base
 from db.models.real_word import RealWord
 from dotenv import load_dotenv
-import json
+
 
 load_dotenv(os.path.join(os.path.dirname(__file__), './.env.bot.dev'))
 
@@ -28,7 +28,7 @@ def insert_raw_word(table, **kwargs):
     finally:
         session.close()
 
-def get_raw_words(status=WordStatus.QUEUED, limit=100):
+def get_raw_words(status=WordStatus.QUEUED, limit=5):
     session = Session()
     try:
         words = session.query(RawWord).filter(RawWord.status == status).limit(limit).all()

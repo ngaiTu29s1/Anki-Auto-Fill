@@ -3,6 +3,7 @@ import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 import json
+from db_utils import get_raw_words
 
 # config
 load_dotenv(os.path.join(os.path.dirname(__file__), './.env.bot.dev'))
@@ -56,7 +57,7 @@ def get_full_word(words):
         - word_audio: always leave empty string ""
         - image: always leave empty string ""
         - example_audio: always leave empty string ""
-        - clean_sentence: leave empty string ""
+        - clean_sentence: a sentence using the word must be the most innovative possible, use colaborful words, make it interesting and engaging for learners
 
         Rules:
         - Return ONLY valid JSON array.
@@ -73,4 +74,4 @@ def get_full_word(words):
     # print(text_json, type(text_json[0]))
     return text_json
 
-get_full_word(["example", "test"])
+print(get_full_word(get_raw_words()))
