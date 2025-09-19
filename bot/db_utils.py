@@ -1,3 +1,4 @@
+
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -36,5 +37,21 @@ def get_raw_words(status=WordStatus.QUEUED):
     except Exception as e:
         print(f"Error fetching words: {e}")
         return []
+    finally:
+        session.close()
+
+def update_raw_word_status(normalized_word, success=True):
+    session = Session()
+    try:
+        word = session.query(RawWord).filter(RawWord.normalized_word == normalized_word).first()
+        if word:
+            word.status = WordStatus.ENRICHED if success else WordStatus.ERROR
+            session.commit()
+            print(f"Updated status for {normalized_word} to {word.status}")
+        else:
+            print(f"Word not found: {normalized_word}")
+    except Exception as e:
+        session.rollback()
+        print(f"Error updating status: {e}")
     finally:
         session.close()
