@@ -44,3 +44,43 @@ def ai_validate_word(word):
     response = model.generate_content(prompt)
     result = response.text.strip().upper()
     return result == "VALID"
+
+def get_full_word(words):
+    prompt = (
+        """For each input word, output ONE JSON object with exactly these fields:
+        - word: the input word (string)
+        - phonetic: IPA transcription (string, e.g. "/ˈæp.l̩/")
+        - english_meaning: ONE short, simple English definition (<=15 words)
+        - vietnamese_meaning: ONE concise Vietnamese translation (<=8 words)
+        - example_sentence: ONE simple sentence using the word (<=15 words, A1–B1 level)
+        - word_audio: always leave empty string ""
+        - image: always leave empty string ""
+        - example_audio: always leave empty string ""
+        - clean_sentence: leave empty string ""
+
+        Rules:
+        - Return ONLY valid JSON array.
+        - Exactly one object per input word, with fields in snake_case as listed.
+        - example_sentence must be natural, useful for learners.
+        - If you are unsure about any field, leave it as "".
+        Do not include any markdown or code block markers. Output only the JSON array, nothing else.
+        """
+        f"Input words: {', '.join(words)}"
+    )
+    response = model.generate_content(prompt)
+    text = response.text.strip()
+    print(type(text[0]))
+    # Parse response: mỗi dòng 1. word: definition
+    results = []
+    for i in range(len(words)):
+        prefix = f"{i+1}. "
+        line = next((l for l in text.splitlines() if l.strip().startswith(prefix)), None)
+        if line:
+            parts = line.split(':', 1)
+            definition = parts[1].strip() if len(parts) > 1 else ''
+        else:
+            definition = ''
+        results.append(definition)
+    return results
+
+get_full_word(["example", "test"])
